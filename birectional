@@ -6,37 +6,20 @@ pi = spidev.SpiDev()
 h = pi.open(0,1)
 
 pi.mode = 0
-#921600
+
 pi.max_speed_hz =921600 
 
 stop = time.time() +  120.0
 
-n = 0
-
-
-
-
-
-
 data = ['\n','u','1','2','\r']
 
-while time.time() < stop:
-	n += 1
-	#x = pi.xfer([1]) #send integers/long using an array
-	#tx = pi.writebytes([ord('h')]) #send a single character
-	#x = pi.readbytes(1)
-	for i in range(len(data)):
-#if I could write
-#		if (rx = 1)
 
-		tx = pi.writebytes([ord(data[i])]) #send a single character
-#if not, do not write.
-
-	#if x == 0:
-	#	break
-	#time.sleep(0.3)
-
-
+#while time.time() < stop:
+#x = pi.xfer([1]) #send integers/long using an array
+#tx = pi.writebytes([ord('h')]) #send a single character
+#x = pi.readbytes(1)
+for i in range(len(data)):
+	tx = pi.writebytes([ord(data[i])]) #send a single character
 
 
 pi.close()
