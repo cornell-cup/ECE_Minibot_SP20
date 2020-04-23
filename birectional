@@ -11,16 +11,13 @@ pi.max_speed_hz =921600
 
 stop = time.time() +  120.0
 
-n = 0
+data = ['\n','u','1','2','\r']
 
-data = ['\n','R','J','1','2','\r']
-
-while time.time() < stop:
-	n += 1
-	#x = pi.xfer([1]) #send integers/long using an array
-	#tx = pi.writebytes([ord('h')]) #send a single character
-	#x = pi.readbytes(1)
-	for i in range(len(data)):
-		tx = pi.writebytes([ord(data[i])]) #send a single character
+#while time.time() < stop:
+#x = pi.xfer([1]) #send integers/long using an array
+#tx = pi.writebytes([ord('h')]) #send a single character
+#x = pi.readbytes(1)
+for i in range(len(data)):
+	tx = pi.writebytes([ord(data[i])]) #send a single character
 
 pi.close()
