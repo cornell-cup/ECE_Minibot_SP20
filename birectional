@@ -13,7 +13,12 @@ stop = time.time() +  120.0
 
 n = 0
 
-data = ['\n','R','J','1','2','\r']
+
+
+
+
+
+data = ['\n','u','1','2','\r']
 
 while time.time() < stop:
 	n += 1
@@ -30,6 +35,7 @@ while time.time() < stop:
 	#if x == 0:
 	#	break
 	#time.sleep(0.3)
+
 
 
 
