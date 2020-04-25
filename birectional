@@ -32,7 +32,7 @@ portsdict = {
     }
 arr = ['\n'] + list(portnumber) + list(portsdict[portname]) + ['\r']
 for i in range(len(arr)):
-	tx = pi.writebytes([ord(data[i])]) #send a single character
+	tx = pi.writebytes([ord(arr[i])]) #send a single character
 	print(i)
 
 pi.close()
