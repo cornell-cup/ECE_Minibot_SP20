@@ -11,7 +11,7 @@ pi.max_speed_hz =9600
 
 stop = time.time() +  120.0
 
-#data = ['\n','u','1','2','\r']
+data = ['\n','d','u','\r']
 
 
 while time.time() < stop:
