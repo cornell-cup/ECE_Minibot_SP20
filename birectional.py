@@ -15,6 +15,9 @@ data = ['\n','d','u','\r']
 
 
 while time.time() < stop:
+	for i in range(len(data)):
+ 	tx = pi.writebytes([ord(data[i])]) #send a single character
+# 	print(i)
 #x = pi.xfer([1]) #send integers/long using an array
 #tx = pi.writebytes([ord('h')]) #send a single character
 	x = pi.readbytes(1)
