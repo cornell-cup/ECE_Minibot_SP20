@@ -7,7 +7,7 @@ h = pi.open(0,1)
 
 pi.mode = 0
 
-pi.max_speed_hz =921600 
+pi.max_speed_hz =9600 
 
 stop = time.time() +  120.0
 
