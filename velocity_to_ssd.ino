@@ -6,10 +6,10 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 
-int digit1 = 11; //PWM Display leftmost 
-int digit2 = 10; //PWM Display one from left
-int digit3 = 9; //PWM Display one from right
-int digit4 = 6; //PWM Display rightmost 
+int digit1 = 2; //Display leftmost 
+int digit2 = 3; //Display one from left
+int digit3 = 4; //Display one from right
+int digit4 = 5; //Display rightmost 
 Timer t;
 
 
@@ -28,13 +28,13 @@ float vz = 0.0;
 #define DIGIT_OFF  LOW
 #define DISPLAY_BRIGHTNESS  500
 
-int segA = 2; 
-int segB = 3; 
-int segC = 4; 
-int segD = 5; 
-int segE = 12; //seg 6 is used bij display 1 for its pwm function
-int segF = 7; 
-int segG = 8; 
+int segA = 6; 
+int segB = 7; 
+int segC = 8; 
+int segD = 9; 
+int segE = 10; //seg 6 is used bij display 1 for its pwm function
+int segF = 11; 
+int segG = 12; 
 int segPD = 13; 
 
 String string1 = "";
@@ -109,7 +109,7 @@ void setup(void)
  pinMode(digit3, OUTPUT);
  pinMode(digit4, OUTPUT);
 
- t.every(400, takeReading);
+ t.every(250, takeReading);
 
   Serial.begin(9600);
   Serial.println("Orientation Sensor Raw Data Test"); Serial.println("");
@@ -396,8 +396,9 @@ void takeReading()
 {
   imu::Vector<3> lineacc = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
   
-  //take 1/2*(x1 + two1) * 5 = velocity value
+  //take 1/2*(x1 + two1) * .08 = velocity value
   //take magnitude of all components (pythagorean thm) 
+  //serial.print velocity
   
   x1 = lineacc.x();
   x2 = lineacc.y();
@@ -414,12 +415,6 @@ void takeReading()
   vz = .04*(x3 + two3);
 
   
-  mag = sqrt(pow(vx,2) + (pow(vy,2)) + (pow(vz,2))); 
-  
- //displayCalStatus();
-  
-  //Serial.println(mag);
- 
-  //Serial.print(",");
+  mag = sqrt(pow(vx,2) + (pow(vy,2)) + (pow(vz,2)));
   
 }
