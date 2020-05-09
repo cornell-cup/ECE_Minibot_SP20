@@ -8,6 +8,7 @@
 //10 SS (slave select)
 //send string of Hello to Raspberry Pi
 
+//initializing variables
 //J2: S6, S1, S4, ADC0
 Servo myservo;
 int bufSize = 4;
@@ -32,7 +33,7 @@ int LED = 5;
 
 void setup() {
   Serial.begin(115200);
-  pinMode (MISO, OUTPUT);
+  pinMode (MISO, OUTPUT); //output because sensor output
   SPCR |= bit (SPE); //turn on SPI in slave mode
   //getting ready for an interrupt
   pinMode(trigPin, OUTPUT);
@@ -47,15 +48,20 @@ void setup() {
 
 //SPI ISR (Interrupt Service Routine)
 
-ISR (SPI_STC_vect){
+ISR (SPI_STC_vect){ //pi/arduino communication, this is they key portion of bidirectional spi
   
+  Serial.println("Entered ISR");
+  if (SPDR != c)
+    Serial.println("Value has been changed");
   byte c = SPDR; //get byte from the SPI data register
+  Serial.print("ISR Value: ");
+  Serial.println(c);
   if (c == '\n'){ //the beginning of the data
-    valid = true;
+    valid = true; //data can start being read, if false, data is useless
   }
   else if (c == '\r'){
-    valid = false; //end of character
-    process_it = true;
+    valid = false; //end of character, indicates end of data so stop reading
+    process_it = true; //done with this process
   }
   if ((valid == true) && (c != '\n')){
     if (pos < bufSize ){  ///sizeof buf
@@ -88,17 +94,17 @@ void bi_directional(){
 //      get_distance();
 //      SPDR = cm;
   if (buf[0] == 'd'){
-    if (buf[1] == 'u'){
+    if (buf[1] == 'u'){ //array du is a call that information needs to be collected
       get_distance();
-      SPDR = cm;
+      SPDR = cm; //setting data into the register to be processed
     }
   }
   if (buf[0] == 's'){
-    SPDR = 0;
+    SPDR = 0; //stop reading data
   }
 }
 
-void set_ports(){
+void set_ports(){ //collects data from different sensors depending on the buffer
     if (buf[0] == '2'){
     //right motor
       if ((buf[1] == 'L') && (buf[2] == 'M') ){
@@ -288,7 +294,7 @@ void loop() {
 //    for (int i = 0; i<bufSize; i++){
 //      buf[i] = 0;
 //    }
-    pos = 0;
-    process_it = false;
+    pos = 0; //resets everything, buffer becomes zero 
+    process_it = false;//resets to before data is processed
   }
 }
