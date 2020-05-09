@@ -19,9 +19,9 @@ float x1 = 0.0;
 float x2 = 0.0;
 float x3 = 0.0;
 
-float v.x = 0.0;
-float v.y = 0.0; 
-float v.z = 0.0; 
+float vx = 0.0;
+float vy = 0.0; 
+float vz = 0.0; 
 
 
 #define DIGIT_ON  LOW
@@ -65,16 +65,36 @@ String string4 = "";
 //                                   id, address
 Adafruit_BNO055 bno = Adafruit_BNO055(-1, 0x28);
 
-/**************************************************************************/
-/*
-    Arduino setup function (automatically called at startup)
-*/
-/**************************************************************************/
+void displayCalStatus(void)
+{
+  /* Get the four calibration values (0..3) */
+  /* Any sensor data reporting 0 should be ignored, */
+  /* 3 means 'fully calibrated" */
+  uint8_t system, gyro, accel, mag;
+  system = gyro = accel = mag = 0;
+  bno.getCalibration(&system, &gyro, &accel, &mag);
+
+  /* The data should be ignored until the system calibration is > 0 */
+  Serial.print(" ");
+  if (!system)
+  {
+    Serial.print("! ");
+  }
+
+  /* Display the individual values */
+  Serial.print("Sys:");
+  Serial.print(system, DEC);
+  //Serial.print(" G:");
+  //Serial.print(gyro, DEC);
+  Serial.print(" A:");
+  Serial.print(accel, DEC);
+  //Serial.print(" M:");
+  //Serial.print(mag, DEC);
+}
 
 void setup(void)
 {
 
-  
   pinMode(segA, OUTPUT);
   pinMode(segB, OUTPUT);
   pinMode(segC, OUTPUT);
@@ -122,104 +142,104 @@ void setup(void)
 }
 
 void display0(){
-  digitalWrite(segA, HIGH);   
-  digitalWrite(segB, HIGH);   
-  digitalWrite(segC, HIGH);   
-  digitalWrite(segD, HIGH);   
-  digitalWrite(segE, HIGH);   
-  digitalWrite(segF, HIGH);   
-  digitalWrite(segG, LOW);  
-}
-void display1(){
   digitalWrite(segA, LOW);   
-  digitalWrite(segB, HIGH);   
-  digitalWrite(segC, HIGH);   
+  digitalWrite(segB, LOW);   
+  digitalWrite(segC, LOW);   
   digitalWrite(segD, LOW);   
   digitalWrite(segE, LOW);   
   digitalWrite(segF, LOW);   
-  digitalWrite(segG, LOW);
-
+  digitalWrite(segG, HIGH);  
 }
-
-void display2() {
+void display1(){
   digitalWrite(segA, HIGH);   
-  digitalWrite(segB, HIGH);   
+  digitalWrite(segB, LOW);   
   digitalWrite(segC, LOW);   
   digitalWrite(segD, HIGH);   
   digitalWrite(segE, HIGH);   
-  digitalWrite(segF, LOW);   
+  digitalWrite(segF, HIGH);   
   digitalWrite(segG, HIGH);
 
 }
 
-void display3() {
-  digitalWrite(segA, HIGH);   
-  digitalWrite(segB, HIGH);   
+void display2() {
+  digitalWrite(segA, LOW);   
+  digitalWrite(segB, LOW);   
   digitalWrite(segC, HIGH);   
-  digitalWrite(segD, HIGH);   
+  digitalWrite(segD, LOW);   
   digitalWrite(segE, LOW);   
-  digitalWrite(segF, LOW);   
-  digitalWrite(segG, HIGH);  
+  digitalWrite(segF, HIGH);   
+  digitalWrite(segG, LOW);
+
+}
+
+void display3() {
+  digitalWrite(segA, LOW);   
+  digitalWrite(segB, LOW);   
+  digitalWrite(segC, LOW);   
+  digitalWrite(segD, LOW);   
+  digitalWrite(segE, HIGH);   
+  digitalWrite(segF, HIGH);   
+  digitalWrite(segG, LOW);  
 }
 
 void display4() {
-  digitalWrite(segA, LOW);   
-  digitalWrite(segB, HIGH);   
-  digitalWrite(segC, HIGH);   
-  digitalWrite(segD, LOW);   
-  digitalWrite(segE, LOW);   
-  digitalWrite(segF, HIGH);   
-  digitalWrite(segG, HIGH);  
+  digitalWrite(segA, HIGH);   
+  digitalWrite(segB, LOW);   
+  digitalWrite(segC, LOW);   
+  digitalWrite(segD, HIGH);   
+  digitalWrite(segE, HIGH);   
+  digitalWrite(segF, LOW);   
+  digitalWrite(segG, LOW);  
 }
 
 void display5(){
-  digitalWrite(segA, HIGH);   
-  digitalWrite(segB, LOW);   
-  digitalWrite(segC, HIGH);   
-  digitalWrite(segD, HIGH);   
-  digitalWrite(segE, LOW);   
-  digitalWrite(segF, HIGH);   
-  digitalWrite(segG, HIGH);   
+  digitalWrite(segA, LOW);   
+  digitalWrite(segB, HIGH);   
+  digitalWrite(segC, LOW);   
+  digitalWrite(segD, LOW);   
+  digitalWrite(segE, HIGH);   
+  digitalWrite(segF, LOW);   
+  digitalWrite(segG, LOW);   
 }
 
 void display6(){
-  digitalWrite(segA, HIGH);   
-  digitalWrite(segB, LOW);   
-  digitalWrite(segC, HIGH);   
-  digitalWrite(segD, HIGH);   
-  digitalWrite(segE, HIGH);   
-  digitalWrite(segF, HIGH);   
-  digitalWrite(segG, HIGH);  
-}
-
-void display7(){
-  digitalWrite(segA, HIGH);   
+  digitalWrite(segA, LOW);   
   digitalWrite(segB, HIGH);   
-  digitalWrite(segC, HIGH);   
+  digitalWrite(segC, LOW);   
   digitalWrite(segD, LOW);   
   digitalWrite(segE, LOW);   
   digitalWrite(segF, LOW);   
-  digitalWrite(segG, LOW);    
+  digitalWrite(segG, LOW);  
 }
 
-void display8(){
-  digitalWrite(segA, HIGH);   
-  digitalWrite(segB, HIGH);   
-  digitalWrite(segC, HIGH);   
+void display7(){
+  digitalWrite(segA, LOW);   
+  digitalWrite(segB, LOW);   
+  digitalWrite(segC, LOW);   
   digitalWrite(segD, HIGH);   
   digitalWrite(segE, HIGH);   
   digitalWrite(segF, HIGH);   
-  digitalWrite(segG, HIGH);   
+  digitalWrite(segG, HIGH);    
+}
+
+void display8(){
+  digitalWrite(segA, LOW);   
+  digitalWrite(segB, LOW);   
+  digitalWrite(segC, LOW);   
+  digitalWrite(segD, LOW);   
+  digitalWrite(segE, LOW);   
+  digitalWrite(segF, LOW);   
+  digitalWrite(segG, LOW);   
 }
 
 void display9(){
-  digitalWrite(segA, HIGH);   
-  digitalWrite(segB, HIGH);   
-  digitalWrite(segC, HIGH);   
-  digitalWrite(segD, LOW);   
-  digitalWrite(segE, LOW);   
-  digitalWrite(segF, HIGH);   
-  digitalWrite(segG, HIGH);  
+  digitalWrite(segA, LOW);   
+  digitalWrite(segB, LOW);   
+  digitalWrite(segC, LOW);   
+  digitalWrite(segD, HIGH);   
+  digitalWrite(segE, HIGH);   
+  digitalWrite(segF, LOW);   
+  digitalWrite(segG, LOW);  
   
 }
 
@@ -269,10 +289,10 @@ void ssd(String mags){
   String magstring = mags;
 
 
-  digitalWrite(digit1, LOW);
-  digitalWrite(digit2, HIGH);
-  digitalWrite(digit3, HIGH);
-  digitalWrite(digit4, HIGH);
+  digitalWrite(digit1, HIGH);
+  digitalWrite(digit2, LOW);
+  digitalWrite(digit3, LOW);
+  digitalWrite(digit4, LOW);
 
   if(magstring.length() == 5){
     string1 = magstring.substring(0,1);    
@@ -283,17 +303,17 @@ void ssd(String mags){
    
   displaying(string1);
   delay(5);               // wait for a second  
-  digitalWrite(digit1, HIGH);
-  digitalWrite(digit2, HIGH);
-  digitalWrite(digit3, HIGH);
-  digitalWrite(digit4, HIGH);  
+  digitalWrite(digit1, LOW);
+  digitalWrite(digit2, LOW);
+  digitalWrite(digit3, LOW);
+  digitalWrite(digit4, LOW);  
   delay(1);
  
-  digitalWrite(segPD, HIGH);    
-  digitalWrite(digit1, HIGH);
-  digitalWrite(digit2, LOW);
-  digitalWrite(digit3, HIGH);
-  digitalWrite(digit4, HIGH);  
+  digitalWrite(segPD, LOW);    
+  digitalWrite(digit1, LOW);
+  digitalWrite(digit2, HIGH);
+  digitalWrite(digit3, LOW);
+  digitalWrite(digit4, LOW);  
 
   if(magstring.length() == 5){
     string2 = magstring.substring(1,2);
@@ -305,19 +325,19 @@ void ssd(String mags){
   displaying(string2);  
   delay(5);               // wait for a second
 
-  digitalWrite(digit1, HIGH);
-  digitalWrite(digit2, HIGH);
-  digitalWrite(digit3, HIGH);
-  digitalWrite(digit4, HIGH);
+  digitalWrite(digit1, LOW);
+  digitalWrite(digit2, LOW);
+  digitalWrite(digit3, LOW);
+  digitalWrite(digit4, LOW);
   delay(1);
   
-  digitalWrite(segPD, LOW);
+  digitalWrite(segPD, HIGH);
 
   
-  digitalWrite(digit1, HIGH);
-  digitalWrite(digit2, HIGH);
-  digitalWrite(digit3, LOW);
-  digitalWrite(digit4, HIGH);  
+  digitalWrite(digit1, LOW);
+  digitalWrite(digit2, LOW);
+  digitalWrite(digit3, HIGH);
+  digitalWrite(digit4, LOW);  
 
   if(magstring.length() == 5) {
     string3 = magstring.substring(3,4);
@@ -330,17 +350,17 @@ void ssd(String mags){
   displaying(string3);
   delay(5);               // wait for a second
 
-  digitalWrite(digit1, HIGH);
-  digitalWrite(digit2, HIGH);
-  digitalWrite(digit3, HIGH);
-  digitalWrite(digit4, HIGH);
+  digitalWrite(digit1, LOW);
+  digitalWrite(digit2, LOW);
+  digitalWrite(digit3, LOW);
+  digitalWrite(digit4, LOW);
   delay(1);
   
   
-  digitalWrite(digit1, HIGH);
-  digitalWrite(digit2, HIGH);
-  digitalWrite(digit3, HIGH);
-  digitalWrite(digit4, LOW); 
+  digitalWrite(digit1, LOW);
+  digitalWrite(digit2, LOW);
+  digitalWrite(digit3, LOW);
+  digitalWrite(digit4, HIGH); 
 
   if(magstring.length() == 5){
     string4 = magstring.substring(4,5);
@@ -352,10 +372,10 @@ void ssd(String mags){
   displaying(string4); 
   delay(5);               // wait for a second
 
-  digitalWrite(digit1, HIGH);
-  digitalWrite(digit2, HIGH);
-  digitalWrite(digit3, HIGH);
-  digitalWrite(digit4, HIGH);
+  digitalWrite(digit1, LOW);
+  digitalWrite(digit2, LOW);
+  digitalWrite(digit3, LOW);
+  digitalWrite(digit4, LOW);
   delay(1);
 
 
@@ -365,6 +385,7 @@ void ssd(String mags){
 void loop(void){
   /* Display the floating point data */
 
+  Serial.println(mag);
   String magstring = String(abs(mag));
   t.update();
   
@@ -380,39 +401,30 @@ void takeReading()
   //take magnitude of all components (pythagorean thm) 
   //serial.print velocity
   
-  x1 = lineacc.x;
-  x2 = lineacc.y;
-  x3 = lineacc.z;
+  x1 = lineacc.x();
+  x2 = lineacc.y();
+  x3 = lineacc.z();
 
-  delay(5);
+  delay(10);
 
-  float two1 = lineacc.x;
-  float two2 = lineacc.y;
-  float two3 = lineacc.z;  
+  float two1 = lineacc.x();
+  float two2 = lineacc.y();
+  float two3 = lineacc.z(); ;
 
-  v.x = 2.5*(x1 + two1);
-  v.y = 2.5*(x2 + two2);
-  v.z = 2.5*(x3 + two3);
+  vx = .04*(x1 + two1);
+  vy = .04*(x2 + two2);
+  vz = .04*(x3 + two3);
 
-  mag = sqrt(pow((v.x),2) + (pow((v.y,2))) + (pow((v.z,2)))) 
   
-  Serial.println(abs(mag));  
+  mag = sqrt(pow(vx,2) + (pow(vy,2)) + (pow(vz,2))); 
+
+ //Serial.println(vz);
+
+  
+ //displayCalStatus();
+  
+  //Serial.println(mag);
+ 
+  //Serial.print(",");
+  
 }
-
-//void takeReading2()
-//{
-  //sensors_event_t event1; 
-  //bno.getEvent(&event1);
-
-  //float two1 = event1.orientation.x;
-  //float two2 = event1.orientation.y;
-  //float two3 = event1.orientation.z;   
-  //Serial.println(x1);
-
-  //Serial.println(two1);
-  
-  //mag = abs((two1-x1))/.1;
-
-  //Serial.println(abs(mag));
-  
-//}
