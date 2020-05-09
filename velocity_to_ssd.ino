@@ -109,8 +109,7 @@ void setup(void)
  pinMode(digit3, OUTPUT);
  pinMode(digit4, OUTPUT);
 
- t.every(200, takeReading);
- //t.every(201, takeReading2);
+ t.every(400, takeReading);
 
   Serial.begin(9600);
   Serial.println("Orientation Sensor Raw Data Test"); Serial.println("");
@@ -399,7 +398,6 @@ void takeReading()
   
   //take 1/2*(x1 + two1) * 5 = velocity value
   //take magnitude of all components (pythagorean thm) 
-  //serial.print velocity
   
   x1 = lineacc.x();
   x2 = lineacc.y();
@@ -417,9 +415,6 @@ void takeReading()
 
   
   mag = sqrt(pow(vx,2) + (pow(vy,2)) + (pow(vz,2))); 
-
- //Serial.println(vz);
-
   
  //displayCalStatus();
   
