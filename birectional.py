@@ -11,17 +11,20 @@ pi.max_speed_hz =9600
 
 stop = time.time() +  120.0
 
-data = ['\n','s','s','\r']
+data = ['\n','s','s']
 for i in range(len(data)):
  	tx = pi.writebytes([ord(data[i])]) #send a single character
 
-# while time.time() < stop:
+#while time.time() < stop:
+
 # 	print(i)
 x = pi.xfer([90]) #send integers/long using an array
 #	x = pi.writebytes([90]) #send a single character
 #	x = pi.readbytes(1)
 print(x)
-	
+
+pi.writebytes([ord(['\r'])])
+
 # ports = ["ULTRASONIC","3"]
 # portname = ports[0]
 # portnumber = str(ports[1])
