@@ -15,12 +15,12 @@ data = ['\n','s','s','\r']
 for i in range(len(data)):
  	tx = pi.writebytes([ord(data[i])]) #send a single character
 
-while time.time() < stop:
+# while time.time() < stop:
 # 	print(i)
-	x = pi.xfer([90]) #send integers/long using an array
+x = pi.xfer([90]) #send integers/long using an array
 #	x = pi.writebytes([90]) #send a single character
 #	x = pi.readbytes(1)
-	print(x)
+print(x)
 	
 # ports = ["ULTRASONIC","3"]
 # portname = ports[0]
