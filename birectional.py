@@ -17,8 +17,8 @@ for i in range(len(data)):
 
 while time.time() < stop:
 # 	print(i)
-	x = pi.xfer([90]) #send integers/long using an array
-#tx = pi.writebytes([ord('h')]) #send a single character
+#	x = pi.xfer([90]) #send integers/long using an array
+	x = pi.writebytes([90]) #send a single character
 #	x = pi.readbytes(1)
 	print(x)
 	
