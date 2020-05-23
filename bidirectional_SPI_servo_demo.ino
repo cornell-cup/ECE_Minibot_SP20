@@ -6,18 +6,16 @@
 //12 MISO (master in slave out)
 //11 MOSI (master out slave in)
 //10 SS (slave select)
-//send string of Hello to Raspberry Pi
 
-//initializing variables
-//J2: S6, S1, S4, ADC0
 Servo myservo;
+//initialize the buffer
 int bufSize = 4;
 char buf [4];
 volatile byte pos = 0;
-volatile boolean process_it;
-//ultrasonic setup
-int trigPin = 3; //digital pin
-int echoPin = A1; //analog pin
+//volatile boolean process_it;
+//different sensors pins initialization
+int trigPin = 3; //setting the pins for ultrasonic here for testing purpose
+int echoPin = A1;
 int infra;
 int line;
 int encoderPin;
@@ -26,21 +24,23 @@ int motorpin2;
 long duration,cm;
 int n = 0;
 bool valid = false;
+bool process_it = false;
 String x = "";
 int LED = 5;
+byte newbyte = 0;
 
 //int interruptPin = 10; //might not be necessary
 
 void setup() {
   Serial.begin(115200);
-  pinMode (MISO, OUTPUT); //output because sensor output
+  pinMode (MISO, OUTPUT);
   SPCR |= bit (SPE); //turn on SPI in slave mode
-  //getting ready for an interrupt
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   pinMode(LED, OUTPUT);
   pos = 0;
-  process_it = false;
+  //process_it = false;
+  myservo.attach(9);
   //turn on the interrupt
   SPI.attachInterrupt();
 
@@ -48,36 +48,46 @@ void setup() {
 
 //SPI ISR (Interrupt Service Routine)
 
-ISR (SPI_STC_vect){ //pi/arduino communication, this is they key portion of bidirectional spi
+ISR (SPI_STC_vect){
   
-  Serial.println("Entered ISR");
-  if (SPDR != c)
-    Serial.println("Value has been changed");
   byte c = SPDR; //get byte from the SPI data register
-  Serial.print("ISR Value: ");
-  Serial.println(c);
-  if (c == '\n'){ //the beginning of the data
-    valid = true; //data can start being read, if false, data is useless
+  //detect the beginning of the buffer, do not put it in the buffer
+  if (c == '\n'){ 
+    valid = true;
   }
+  //detect the end character
   else if (c == '\r'){
-    valid = false; //end of character, indicates end of data so stop reading
-    process_it = true; //done with this process
+    valid = false;
+//    buf[0] = 0;
+//    buf[1] = 0;
+      pos = 0;
+//  process_it = true;
   }
-  if ((valid == true) && (c != '\n')){
-    if (pos < bufSize ){  ///sizeof buf
+  //put data into the buffer
+  if ((valid == true) && (c != '\n') && (c != '\r')){
+    if (pos < bufSize ){  ///sizeof buffer
     buf [pos] = c;
     pos ++;
   }
   }
-  //end of room available
 }
-void LED_test(){
-  //will turn on the LED when receive "TL"
-  if (buf[0] == 'T' && buf [1] == 'L'){
-    digitalWrite(LED,HIGH);
+
+
+/*for servo demo 
+ * make the servo to turn the angle specified by pi
+*/
+void servo_demo(){
+  //send 'ss' with the start and end character
+  //as indication of setting servo angles
+    if (buf[0] == 's' && buf[1] == 's' ){
+      int a = buf[2];
+      Serial.println(a);
+      myservo.write(a);
+     
   }
-  
 }
+  
+/*Getting distance data from the ultrasonic sensors  */
 void get_distance(){
   digitalWrite(trigPin,LOW);
   delayMicroseconds(5);
@@ -86,25 +96,29 @@ void get_distance(){
   pinMode(echoPin,INPUT);
   duration = pulseIn(echoPin,HIGH);
   cm = (duration/2)/29.1;
-  Serial.println(cm);
-  //delay(300);
-}
-// RJ12 = 82 74 49 50
-void bi_directional(){
-//      get_distance();
-//      SPDR = cm;
-  if (buf[0] == 'd'){
-    if (buf[1] == 'u'){ //array du is a call that information needs to be collected
-      get_distance();
-      SPDR = cm; //setting data into the register to be processed
-    }
-  }
-  if (buf[0] == 's'){
-    SPDR = 0; //stop reading data
-  }
+
 }
 
-void set_ports(){ //collects data from different sensors depending on the buffer
+/*for testing bidirectional communication
+* in the blockly code. Taking in distance 
+* data and make the bot do something in blockly
+*/
+void bi_directional(){
+
+  get_distance();
+  
+  if (buf[0] == 'd' && buf[1] == 'u'){
+      SPDR = cm;
+      Serial.println(cm);
+  }
+}
+  
+
+
+/*custom port switching functi
+on */
+void set_ports(){
+  
     if (buf[0] == '2'){
     //right motor
       if ((buf[1] == 'L') && (buf[2] == 'M') ){
@@ -116,7 +130,7 @@ void set_ports(){ //collects data from different sensors depending on the buffer
           pinMode(encoderPin, INPUT);        
     }
     //right motor
-      else if ((buf[1] == 'L') && (buf[2] == 'M')){
+      else if ((buf[1] == 'R') && (buf[2] == 'M')){
           encoderPin = A0;
           motorpin1 = 4;
           motorpin2 = 6;
@@ -137,9 +151,7 @@ void set_ports(){ //collects data from different sensors depending on the buffer
         pinMode(infra, INPUT);
       
   }
-      else if (buf[1] == 'R'){
-      
-    }
+
     //Line Sensors
       else if (buf[1] == 'L'){
         line = A0;
@@ -174,6 +186,8 @@ else if (buf[0] == '3'){
         trigPin = 3;
         pinMode(trigPin, OUTPUT);
         pinMode(echoPin, INPUT);
+        Serial.println("J3 has set up for ultrasonic");
+        Serial.println("Distance Data can be read now");
     }
     //infrared sensor
     else if (buf[1] == 'I'){
@@ -181,9 +195,7 @@ else if (buf[0] == '3'){
         pinMode(infra, INPUT);
       
   }
-    else if (buf[1] == 'R'){
-      
-    }
+
     //Line Sensors
     else if (buf[1] == 'L'){
         line = A1;
@@ -192,7 +204,7 @@ else if (buf[0] == '3'){
     }
   }
   if (buf[0] == '4'){
-    //right motor
+    //left motor
     if ((buf[1] == 'L') && (buf[2] == 'M') ){
           encoderPin = A2;
           motorpin1 = 8;
@@ -202,7 +214,7 @@ else if (buf[0] == '3'){
           pinMode(encoderPin, INPUT);       
     }
     //right motor
-    else if ((buf[1] == 'L') && (buf[2] == 'M')){
+    else if ((buf[1] == 'R') && (buf[2] == 'M')){
           encoderPin = A2;
           motorpin1 = 8;
           motorpin2 = 5; //pwm pins
@@ -222,10 +234,7 @@ else if (buf[0] == '3'){
         infra = 8;
         pinMode(infra, INPUT);    
   }
-    else if (buf[1] == 'R'){
 
-      
-    }
     //Line Sensors
     else if (buf[1] == 'L'){
         line = A2;
@@ -247,9 +256,7 @@ else if (buf[0] == '3'){
         pinMode(infra, INPUT);
       
   }
-    else if (buf[1] == 'R'){
-      
-    }
+
     //Line Sensors
     else if (buf[1] == 'L'){
         line = A3;
@@ -265,36 +272,14 @@ else if (buf[0] == '3'){
  }
 }
 void loop() {
-  //n++;
-  //for (int i=0; i<bufSize;i++){
-//  Serial.println(buf);
-    
-//    for (int a = 0; a < 3; a ++){
-//      x = x + buf[a];
-//    }
-//    if (x == "u12" ){
-//      Serial.println("true");
-//      echoPin = A3;
-//      trigPin = 9;
-//      pinMode(trigPin, OUTPUT);
-//      pinMode(echoPin, INPUT);
-//    }
-//    x = "";
-//  if (buf[0] == 'u'){
-//    Serial.println("true");
-//  }
-  
-    //set_ports();
+
     bi_directional();
-    //get_distance();
-//  int i, c;
-  //delay(5);
+    servo_demo();
+
+//clear the buffer when a command is executed
+  
   if (process_it){
-    //buf[pos] = 0
-//    for (int i = 0; i<bufSize; i++){
-//      buf[i] = 0;
-//    }
-    pos = 0; //resets everything, buffer becomes zero 
-    process_it = false;//resets to before data is processed
+    pos = 0;
+    process_it = false;
   }
 }
