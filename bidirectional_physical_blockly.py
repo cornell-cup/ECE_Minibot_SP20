@@ -5,9 +5,13 @@ pi = spidev.SpiDev()
 
 h = pi.open(0,1)
 pi.mode = 0
-pi.max_speed_hz = 9600
+pi.max_speed_hz = 115200
+stop = time.time() +120.0
 
-x = pi.readbytes(1)
+while (time.time() < stop):
+ 
+	x = pi.readbytes(1)
+	print(x)
 
 if x == 0:
     data = ['\n','s']
