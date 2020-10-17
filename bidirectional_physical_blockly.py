@@ -1,17 +1,23 @@
 import time
 import spidev
 
-pi = spidev.SpiDev()
+cs0 = 0
+cs1 = 1
 
-h = pi.open(0,1)
+pi = spidev.SpiDev()
+#spi.open(bus, device)
+#cs1 is RFID
+#cs0 is motor
+pi.open(0,cs1)
 pi.mode = 0
 pi.max_speed_hz = 115200
 stop = time.time() +120.0
 
 while (time.time() < stop):
+#if there is input, read from device 1
 	x = pi.readbytes(1)
 	pi.close()
-	a = pi.open(0,0)
+	pi.open(0,cs0)
 	pi.mode = 0
 	pi.max_speed_hz = 115200
 	if x == [0]:
@@ -25,10 +31,10 @@ while (time.time() < stop):
 	else:
 		data = []
 	for i in range(len(data)):
- 	tx = pi.writebytes([ord(data[i])]) #send a single character
+ 		tx = pi.writebytes([ord(data[i])]) #send a single character
 
 	pi.close()
-	h = pi.open(0,1)
+	pi.open(0,cs1)
 	pi.mode = 0
 	pi.max_speed_hz = 115200
 
