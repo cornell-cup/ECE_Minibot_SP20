@@ -13,6 +13,7 @@ ccw = False
 stop = False
 tx = []
 x = []
+stop_time = time.time() + 200
 
 def send_data(data):
     global tx
@@ -48,19 +49,22 @@ def check_input():
     pi.close()
 
 
-while (time.time() < stop):
+while (time.time() < stop_time):
     check_input()
     #when stop is detected
     while stop and not cw and not ccw:
-        data = ['\n','s']
+        print("stop is received")
+        data = ['\n','s','\r']
         send_data(data)
         check_input()
     while cw and not stop and not ccw:
-        data = ['\n','c','w']
+        print("cw is received")
+        data = ['\n','c','w','\r']
         send_data(data)
         check_input()
     while ccw and not stop and not cw:
-        data = ['\n','c','c']
+        print("ccw is received")
+        data = ['\n','c','c','\r']
         send_data(data)
         check_input()
 
