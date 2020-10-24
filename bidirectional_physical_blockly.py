@@ -5,40 +5,67 @@ cs0 = 0
 cs1 = 1
 
 pi = spidev.SpiDev()
-#spi.open(bus, device)
-#cs1 is RFID
-#cs0 is motor
-pi.open(0,1)
-pi.mode = 0
-pi.max_speed_hz = 115200
-stop = time.time() +120.0
+# spi.open(bus, device)
+# cs1 is RFID
+# cs0 is motor
+cw = False
+ccw = False
+stop = False
+tx = []
+x = []
+
+def send_data(data):
+    global tx
+    pi.open(0, cs0)
+    pi.mode = 0
+    pi.max_speed_hz = 115200
+    for i in range(len(data)):
+        tx = pi.writebytes([ord(data[i])])  # send a single character
+    pi.close()
+
+
+def check_input():
+    global x
+    global stop
+    global cw
+    global ccw
+    pi.open(0, cs1)
+    pi.mode = 0
+    pi.max_speed_hz = 115200
+    x = pi.readbytes(1)
+    if x == [1]:
+        stop = True
+        cw = False
+        ccw = False
+    if x == [2]:
+        stop = False
+        cw = True
+        ccw = False
+    if x == [3]:
+        stop = False
+        cw = False
+        ccw = True
+    pi.close()
+
 
 while (time.time() < stop):
-#if there is input, read from device 1
-	x = pi.readbytes(1)
-	if x != [0]:
-	    print(x)
-	pi.close()
-	pi.open(0,cs0)
-	pi.mode = 0
-	pi.max_speed_hz = 115200
-	if x == [1]:
-		data = ['\n','c','c']
-	elif x == [2]:
-		data = ['\n','c','w']
-	elif x == [3]:
-		data = ['\n','t','a']
-	else:
-		data = []
-	for i in range(len(data)):
- 		tx = pi.writebytes([ord(data[i])]) #send a single character
+    check_input()
+    #when stop is detected
+    while stop and not cw and not ccw:
+        data = ['\n','s']
+        send_data(data)
+        check_input()
+    while cw and not stop and not ccw:
+        data = ['\n','c','w']
+        send_data(data)
+        check_input()
+    while ccw and not stop and not cw:
+        data = ['\n','c','c']
+        send_data(data)
+        check_input()
 
-	pi.close()
-	pi.open(0,cs1)
-	pi.mode = 0
-	pi.max_speed_hz = 115200
 
-pi.close()
+
 
 
 
