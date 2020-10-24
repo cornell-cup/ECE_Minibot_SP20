@@ -50,7 +50,8 @@ def check_input():
 
 
 while (time.time() < stop_time):
-    check_input()
+    data = ['\n','s','\r']
+    send_data(data)
     #when stop is detected
     while stop and not cw and not ccw:
         print("stop is received")
