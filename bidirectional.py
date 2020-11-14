@@ -7,7 +7,7 @@ h = pi.open(0,1)
 
 pi.mode = 0
 
-pi.max_speed_hz =9600 
+pi.max_speed_hz =115200 
 
 stop = time.time() +  120.0
 
@@ -17,7 +17,8 @@ stop = time.time() +  120.0
 
 while time.time() < stop:
  x = pi.readbytes(1)
- print(x)
+ if (x != 0): 
+     print(x)
 
 # # 	print(i)
 # x = pi.xfer([90]) #send integers/long using an array
